@@ -1,0 +1,120 @@
+<title>El Reto</title>
+<style>
+  /* Layout: una sola columna centrada, una pantalla cada vez, fondo blanco liso */
+  :root {
+    --bg: #ffffff;
+    --fg: #111111;
+    --muted: #666666;
+    --line: #bbbbbb;
+    --yellow: #ffd600;
+    --red: #e53935;
+    --green: #43a047;
+    --blue: #1e88e5;
+    --font: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    color-scheme: light;
+  }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font);
+    padding-inline: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  main { width: 100%; max-width: 420px; text-align: center; }
+  .screen { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .small { font-size: 0.85rem; color: var(--muted); margin: 0; }
+  h1 { font-size: 2.6rem; line-height: 1.1; margin: 0; text-wrap: balance; }
+  p.msg { font-size: 1rem; line-height: 1.6; margin: 0; text-wrap: pretty; }
+  .dots { display: flex; gap: 10px; }
+  .dot { width: 14px; height: 14px; border-radius: 50%; }
+  form { display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%; }
+  input {
+    width: 100%;
+    font: inherit;
+    font-size: 1rem;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: var(--bg);
+    color: var(--fg);
+    text-align: center;
+  }
+  input:focus-visible, button:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+  button {
+    font: inherit;
+    padding: 8px 20px;
+    border: 1px solid var(--fg);
+    border-radius: 4px;
+    background: var(--bg);
+    color: var(--fg);
+    cursor: pointer;
+  }
+  button:hover { background: var(--fg); color: var(--bg); }
+  .error { min-height: 1.2em; font-size: 0.85rem; color: var(--muted); margin: 0; }
+</style>
+
+<main>
+  <section id="s1" class="screen">
+    <p class="small">Código</p>
+    <div class="dots" aria-hidden="true">
+      <span class="dot" style="background: var(--yellow)"></span>
+      <span class="dot" style="background: var(--red)"></span>
+      <span class="dot" style="background: var(--green)"></span>
+      <span class="dot" style="background: var(--blue)"></span>
+    </div>
+    <form id="f1" autocomplete="off">
+      <input id="i1" type="text" inputmode="numeric" aria-label="Código">
+      <p class="error" id="e1" role="status"></p>
+      <button type="submit">Siguiente</button>
+    </form>
+  </section>
+
+  <section id="s2" class="screen" hidden>
+    <h1>Say my name</h1>
+    <form id="f2" autocomplete="off">
+      <input id="i2" type="text" aria-label="Respuesta">
+      <p class="error" id="e2" role="status"></p>
+      <button type="submit">Siguiente</button>
+    </form>
+  </section>
+
+  <section id="s3" class="screen" hidden>
+    <h1>You're goddamn right</h1>
+    <p class="msg">Felicidades por superar el reto. Supongo que al tener 18 años cada vez eres más listo y superas estas pruebas con más facilidad. Pues nada, decirte que puedes contar conmigo con lo que sea siempre, aunque a veces tengamos nuestros desacuerdos jajajajaja. Pasa un feliz día :)</p>
+  </section>
+</main>
+
+<script>
+  var CODE = atob("NjI4NQ==");
+  var NAME = atob("aGVpc2VuYmVyZw==");
+
+  function show(id) {
+    ["s1", "s2", "s3"].forEach(function (s) {
+      document.getElementById(s).hidden = s !== id;
+    });
+    var input = document.querySelector("#" + id + " input");
+    if (input) input.focus();
+  }
+
+  function check(formId, inputId, errorId, expected, next) {
+    document.getElementById(formId).addEventListener("submit", function (e) {
+      e.preventDefault();
+      var value = document.getElementById(inputId).value.trim().toLowerCase();
+      if (value === expected) {
+        show(next);
+      } else {
+        document.getElementById(errorId).textContent = "Incorrecto";
+        document.getElementById(inputId).select();
+      }
+    });
+    document.getElementById(inputId).addEventListener("input", function () {
+      document.getElementById(errorId).textContent = "";
+    });
+  }
+
+  check("f1", "i1", "e1", CODE, "s2");
+  check("f2", "i2", "e2", NAME, "s3");
+</script>
